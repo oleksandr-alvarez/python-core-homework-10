@@ -1,10 +1,10 @@
 from collections import UserDict
 import re
 
-class PhoneTooShort(Exception):
+class PhoneTooShort(ValueError):
     pass
 
-class PhoneIncludesNotOnlyNumbers(Exception):
+class PhoneIncludesNotOnlyNumbers(ValueError):
     pass
 
 
