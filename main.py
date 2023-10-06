@@ -1,5 +1,4 @@
 from collections import UserDict
-import re
 
 class PhoneTooShort(ValueError):
     pass
@@ -19,16 +18,14 @@ class Field:
         return str(self.value)
 
 class Name(Field):
-    def __init__(self, value):
-        super().__init__(value)
-    
+    pass
 
 class Phone(Field):
     def __init__(self, value):
         super().__init__(value)
         if len(self.value) != 10:
             raise  PhoneTooShort("Phone number should be 10 digits long.")
-        if len(re.findall('\d', self.value)) != 10:
+        if not self.value.isdigit():
             raise PhoneIncludesNotOnlyNumbers("Phone number should only include digits.")
     
 
@@ -55,7 +52,6 @@ class Record:
         if phone_to_find in list_of_phones:
             return self.phones[list_of_phones.index(phone_to_find)]
 
-
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
@@ -64,10 +60,7 @@ class AddressBook(UserDict):
         self.data[record.name.value] = record
 
     def find(self, name_value):
-        if name_value in self.data:
-            found_record = self.data[name_value]
-            return found_record
-        return None
+        return self.data.get(name_value)
     
     def delete(self, name):
         if name in self.data:
