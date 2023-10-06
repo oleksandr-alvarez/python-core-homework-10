@@ -1,9 +1,9 @@
 from collections import UserDict
 
-class PhoneTooShort(ValueError):
+class PhoneTooShortError(ValueError):
     pass
 
-class PhoneIncludesNotOnlyNumbers(ValueError):
+class PhoneIncludesNotOnlyNumbersError(ValueError):
     pass
 
 
@@ -24,9 +24,9 @@ class Phone(Field):
     def __init__(self, value):
         super().__init__(value)
         if len(self.value) != 10:
-            raise  PhoneTooShort("Phone number should be 10 digits long.")
+            raise  PhoneTooShortError("Phone number should be 10 digits long.")
         if not self.value.isdigit():
-            raise PhoneIncludesNotOnlyNumbers("Phone number should only include digits.")
+            raise PhoneIncludesNotOnlyNumbersError("Phone number should only include digits.")
     
 
 class Record:
@@ -37,21 +37,24 @@ class Record:
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
     
-    def remove_phone(self, phone):
-         list_of_phones = [el.value for el in self.phones]
-         if phone in list_of_phones:
-            index_of_phone_to_remove = list_of_phones.index(phone)
-            self.phones.pop(index_of_phone_to_remove)
+    def remove_phone(self, phone_to_remove):
+         search_for_phone = list(filter(lambda phone: phone.value == phone_to_remove, self.phones))
+         if search_for_phone:
+             self.phones.remove(search_for_phone[0])
+         
 
     def edit_phone(self, old_phone, new_phone):
-        list_of_phones = [el.value for el in self.phones]
-        self.phones[list_of_phones.index(old_phone)] = Phone(new_phone)
+        search_for_phone = list(filter(lambda phone: phone.value == old_phone, self.phones))
+        if search_for_phone:
+            search_for_phone[0].value = new_phone
+        else:
+            raise ValueError
     
     def find_phone(self, phone_to_find):
-        list_of_phones = [el.value for el in self.phones]
-        if phone_to_find in list_of_phones:
-            return self.phones[list_of_phones.index(phone_to_find)]
-
+        search_for_phone = list(filter(lambda phone: phone.value == phone_to_find, self.phones))
+        if search_for_phone:
+            return search_for_phone[0]
+ 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
@@ -63,5 +66,4 @@ class AddressBook(UserDict):
         return self.data.get(name_value)
     
     def delete(self, name):
-        if name in self.data:
-            self.data.pop(name)
+        self.data.pop(name, 'Name not present')
