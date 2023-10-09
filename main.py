@@ -118,9 +118,9 @@ class Iterable:
                 self._start_point += self._number_to_display
                 self._end_point += self._number_to_display
                 return items_to_display
-            if len(self._seq[self._start_point:]) > 0: 
-                items_to_display = self._seq[self._start_point:] 
-                self._start_point += self._number_to_display      
-                return items_to_display      
+             
+            items_to_display = self._seq[self._start_point:] 
+            self._start_point += self._number_to_display      
+            return items_to_display      
         raise StopIteration
     
